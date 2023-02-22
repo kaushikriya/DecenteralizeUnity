@@ -1,11 +1,20 @@
 import React from "react";
-export const Contract = ({ contract }) => {
+export const Contract = ({ contract, index }) => {
+  console.log(contract, index);
   return (
     <div>
-      <h>{contract.owner}</h>
-      <h>{contract.requiredAmount}</h>
-      <h>{contract.address}</h>
-      <button onClick={contract.addParticipant}>Add Participants</button>
+      <p>Got the contract</p>
+      {/* <p>{contract.owner}</p> */}
+      <p>{contract.requiredAmount}</p>
+      {contract.particpants?.map((participant) => (
+        <p>{participant}</p>
+      ))}
+      <p>{contract.address}</p>
+      <button onClick={() => contract.handlelAddParticipant(index)}>
+        Add Participants
+      </button>
     </div>
   );
 };
+
+export default Contract;

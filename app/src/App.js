@@ -5,7 +5,7 @@ import { ContractContext } from "./context/contractContext";
 
 const App=()=> {
   const {contracts}= useContext(ContractContext)
-  console.log(contracts);
+  // console.log(contracts);
   return (
  <div>
       <Navbar/>

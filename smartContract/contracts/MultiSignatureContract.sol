@@ -6,22 +6,32 @@ contract MultiSignatureContract {
     address[] public participants;
     uint256 public required;
     uint256 public amount;
+    string public name;
+    bytes public description;
 
     receive() external payable {}
 
-    constructor() payable {
+    constructor(string memory _name, bytes memory _description) payable {
         owner = msg.sender;
         amount = msg.value;
         required = 1;
+        name = _name;
+        description = _description;
         participants.push(owner);
     }
 
-    function addParticipant() external payable {
+    function addParticipant() public payable {
         for (uint256 i = 0; i < participants.length; i++) {
-            require(msg.sender != participants[i]);
+            require(
+                msg.sender != participants[i],
+                "The user is already a member of the contract"
+            );
         }
         require(msg.value == amount);
-        (bool success, ) = address(this).call{value: amount}("");
-        require(success);
+        participants.push(msg.sender);
+    }
+
+    function getAllParticipants() public view returns (address[] memory) {
+        return participants;
     }
 }

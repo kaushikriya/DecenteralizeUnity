@@ -8,11 +8,10 @@ export const AllContracts = ({ contracts }) => {
 
   return (
     <div>
-      {contracts?.length > 0
-        ? contracts.map((contract) => {
-            <Contract contract={contract} />;
-          })
-        : null}
+      <div></div>
+      {contracts?.map((contract, index) => (
+        <Contract contract={contract} index={index} />
+      ))}
     </div>
   );
 };

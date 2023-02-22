@@ -23,31 +23,82 @@ export const ContractProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState();
   const [signer, setSigner] = useState();
   const [amount, setAmount] = useState();
-  const [contracts, setContracts] = useState();
+  const [contracts, setContracts] = useState([]);
+  const [contractForm, setContractForm] = useState();
+
+  const handleFormData = (e) => {
+    console.log(e.target.value, e.target.name);
+    setContractForm({ ...contractForm, [e.target.name]: e.target.value });
+  };
 
   const handleAmount = (event) => {
-    setAmount(event.target.value);
+    console.log(event.target.value);
+    setContractForm({
+      ...contractForm,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const addParticipant = async (contract, _signer, value, key) => {
+    console.log("Adding participant");
+    const addParticipantTxn = await contract
+      .connect(_signer)
+      .addParticipant({ value });
+    await addParticipantTxn.wait();
+    getParticipants(contract, _signer, key);
+  };
+
+  const getParticipants = async (contract, _signer, key) => {
+    console.log("gettingParticipants");
+    const allParticipants = await contract
+      .connect(_signer)
+      .getAllParticipants();
+    const newContracts = contracts;
+
+    console.log(allParticipants, newContracts, key);
+    newContracts[key].participants = allParticipants;
+    setContracts([...newContracts]);
   };
 
   const createContract = async () => {
-    if (!amount) {
-      return alert("Please enter the amount");
+    try {
+      if (contractForm.amount == 0) {
+        return alert("Please enter the amount");
+      }
+      const multiSignatureContract = await deploy(
+        signer,
+        contractForm.amount,
+        contractForm.name,
+        contractForm.description
+      );
+      console.log(multiSignatureContract.address);
+
+      await multiSignatureContract.deployed();
+
+      if (multiSignatureContract) {
+        const contract = {
+          owner: signer,
+          address: multiSignatureContract.address,
+          requiredAmount: contractForm.amount,
+          participants: [],
+          handlelAddParticipant: async (key) => {
+            console.log("handling", key);
+            await addParticipant(
+              multiSignatureContract,
+              signer,
+              contractForm.amount,
+              key
+            );
+          },
+        };
+
+        setContracts([...contracts, contract]);
+        console.log(contracts);
+      }
+    } catch (e) {
+      console.log(e);
+      throw new Error("Could not create contract");
     }
-    const multiSignatureContract = await deploy(signer, amount);
-    console.log(multiSignatureContract.address);
-
-    // const contract = {
-    //   owner: signer,
-    //   address: multiSignatureContract.address,
-    //   requiredAmount: amount,
-    //   participants: [signer],
-    //   addParticipants: await multiSignatureContract
-    //     .connect(signer)
-    //     .addParticipant(),
-    // };
-
-    // setContracts([...contracts, contract]);
-    // console.log(contracts);
   };
 
   const checkIfWalletIsConnected = async () => {
@@ -60,7 +111,6 @@ export const ContractProvider = ({ children }) => {
         if (accounts.length) {
           setCurrentAccount(accounts[0]);
           setSigner(provider.getSigner());
-          console.log(accounts);
         }
       }
     } catch (error) {
@@ -81,7 +131,6 @@ export const ContractProvider = ({ children }) => {
         const accounts = await ethereum.request({
           method: "eth_requestAccounts",
         });
-        console.log(accounts);
         setCurrentAccount(accounts[0]);
       }
     } catch (error) {
@@ -97,8 +146,11 @@ export const ContractProvider = ({ children }) => {
         getSignatureContract,
         createContract,
         currentAccount,
-        handleAmount,
         contracts,
+        handleFormData,
+        contractFormData: { contractForm },
+        handleAmount,
+        setContractForm,
       }}
     >
       {children}
