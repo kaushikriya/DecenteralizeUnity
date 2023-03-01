@@ -6,7 +6,11 @@ export const Navbar = () => {
     // <nav className="w-full bg-blue-500">
     //   <p className="color-blue-500">Navbar</p>
     // </nav>
+<<<<<<< HEAD
     <nav class=" w-full flex justify-between justify-center bg-gradient-to-r from-slate-500 via-gray-500 to-slate-500 px-10 py-4">
+=======
+    <nav class=" w-full flex justify-between justify-center bg-blue-500 px-10 py-4">
+>>>>>>> f6a04901797b2d0d36e12c76443abc9fb53aa55f
       <ul class="flex justify-center">
         <li class="px-2 py-2 cursor-pointer text-white">Home</li>
         <li class="px-2 py-2 cursor-pointer text-white">About</li>

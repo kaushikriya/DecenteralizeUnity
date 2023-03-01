@@ -189,7 +189,6 @@ export const ContractProvider = ({ children }) => {
         contracts,
         handleFormData,
         contractFormData: { contractForm },
-
         setContractForm,
       }}
     >

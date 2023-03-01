@@ -9,6 +9,7 @@ export const AllContracts = ({ contracts }) => {
   return (
     <div class="w-full grid justify-center rounded-xl">
       <h class="w-full flex justify-center p-4 text-l">Contracts</h>
+
       {contracts?.map((contract, index) => (
         <Contract contract={contract} index={index} />
       ))}

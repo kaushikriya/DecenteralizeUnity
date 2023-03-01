@@ -55,7 +55,6 @@ contract MultiSignatureContract {
             if (participants[i] == _address) {
                 return true;
             }
-        }
         return false;
     }
 
@@ -92,8 +91,6 @@ contract MultiSignatureContract {
         require(
             isParticipant(msg.sender),
             "You are not a mamber of this contract"
-        );
-        confirmations[transactionId][msg.sender] = true;
         confirmationCount[transactionId] += 1;
         if (confirmationCount[transactionId] == required) {
             executeTransaction(transactionId);
