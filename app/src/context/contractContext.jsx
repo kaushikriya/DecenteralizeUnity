@@ -22,32 +22,123 @@ const getSignatureContract = () => {
 export const ContractProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState();
   const [signer, setSigner] = useState();
-  const [amount, setAmount] = useState();
-  const [contracts, setContracts] = useState();
+  const [contracts, setContracts] = useState([]);
+  const [contractForm, setContractForm] = useState();
 
-  const handleAmount = (event) => {
-    setAmount(event.target.value);
+  const handleFormData = (e) => {
+    console.log(e.target.value, e.target.name);
+    setContractForm({ ...contractForm, [e.target.name]: e.target.value });
+  };
+
+  // const handleAmount = (event) => {
+  //   setAmount(event.target.value);
+  // };
+
+  const addParticipant = async (contract, _signer, value, key) => {
+    console.log("Adding participant");
+    const addParticipantTxn = await contract
+      .connect(_signer)
+      .addParticipant({ value });
+    await addParticipantTxn.wait();
+  };
+
+  const addTransaction = async (
+    contract,
+    name,
+    description,
+    amount,
+    _signer
+  ) => {
+    console.log("Adding Transaction");
+    const addParticipantTxn = await contract
+      .connect(_signer)
+      .createTransaction(name, description, amount);
+    await addParticipantTxn.wait();
+  };
+
+  const getParticipants = async (contract, _signer) => {
+    console.log("gettingParticipants");
+    const allParticipants = await contract
+      .connect(_signer)
+      .getAllParticipants();
+    console.log(allParticipants);
+    return allParticipants;
+  };
+
+  const getTransactions = async (contract, _signer) => {
+    console.log("getting transactions");
+    const transactions = await contract.connect(_signer).getTransactions();
+    console.log(transactions);
+    return transactions;
+  };
+
+  const confirmTransaction = async (contract, _signer, transactionId) => {
+    await contract.connect(_signer).confirmTransaction(transactionId);
   };
 
   const createContract = async () => {
-    if (!amount) {
-      return alert("Please enter the amount");
+    try {
+      if (!contractForm.amount) {
+        return alert("Please enter the amount");
+      }
+      const multiSignatureContract = await deploy(
+        signer,
+        // amount,
+        // "Test",
+        // "Please fix me"
+        contractForm.amount,
+        contractForm.name,
+        contractForm.description
+      );
+      console.log(multiSignatureContract.address);
+
+      await multiSignatureContract.deployed();
+
+      if (multiSignatureContract) {
+        const contract = {
+          owner: signer,
+          address: multiSignatureContract.address,
+          contractInfo: contractForm,
+          handleAddParticipant: async (key) => {
+            console.log("handling", key);
+            await addParticipant(
+              multiSignatureContract,
+              signer,
+              contractForm.amount,
+              key
+            );
+          },
+          getParticipants: () => {
+            return getParticipants(multiSignatureContract, signer);
+          },
+          getTransactions: () => {
+            return getTransactions(multiSignatureContract, signer);
+          },
+          handleAddTransaction: async (name, description, amount) => {
+            await addTransaction(
+              multiSignatureContract,
+              name,
+              description,
+              amount,
+              signer
+            );
+          },
+          confirmTransaction: async (transactionId) => {
+            await confirmTransaction(
+              multiSignatureContract,
+              signer,
+              transactionId
+            );
+          },
+        };
+
+        setContracts([...contracts, contract]);
+        console.log(contracts);
+      }
+    } catch (e) {
+      console.log(e);
+      throw new Error("Could not create contract");
     }
-    const multiSignatureContract = await deploy(signer, amount);
-    console.log(multiSignatureContract.address);
-
-    // const contract = {
-    //   owner: signer,
-    //   address: multiSignatureContract.address,
-    //   requiredAmount: amount,
-    //   participants: [signer],
-    //   addParticipants: await multiSignatureContract
-    //     .connect(signer)
-    //     .addParticipant(),
-    // };
-
-    // setContracts([...contracts, contract]);
-    // console.log(contracts);
   };
 
   const checkIfWalletIsConnected = async () => {
@@ -60,7 +151,6 @@ export const ContractProvider = ({ children }) => {
         if (accounts.length) {
           setCurrentAccount(accounts[0]);
           setSigner(provider.getSigner());
-          console.log(accounts);
         }
       }
     } catch (error) {
@@ -81,7 +171,6 @@ export const ContractProvider = ({ children }) => {
         const accounts = await ethereum.request({
           method: "eth_requestAccounts",
         });
-        console.log(accounts);
         setCurrentAccount(accounts[0]);
       }
     } catch (error) {
@@ -97,8 +186,11 @@ export const ContractProvider = ({ children }) => {
         getSignatureContract,
         createContract,
         currentAccount,
-        handleAmount,
         contracts,
+        handleFormData,
+        contractFormData: { contractForm },
+
+        setContractForm,
       }}
     >
       {children}
