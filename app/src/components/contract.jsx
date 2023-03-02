@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CreateTransaction from "./createTransaction";
 import Participants from "./participants";
 import Transactions from "./transactions";
@@ -8,6 +8,7 @@ import participantsLogo from "../assets/images/participants.png";
 import showTransactions from "../assets/images/show-transactions.jpg";
 import showParticipants from "../assets/images/show-participants.png";
 import createTransactionLogo from "../assets/images/createTransaction.png";
+import { ContractContext } from "../context/contractContext";
 
 export const Contract = ({ contract, index }) => {
   const [participants, setParticipants] = useState([]);
@@ -15,6 +16,21 @@ export const Contract = ({ contract, index }) => {
   const [transactions, setTransactions] = useState();
   const [showAddTransaction, setShowAddTransaction] = useState(false);
   const [showTransactions, setShowTransactions] = useState(false);
+  const [isMember, setIsMember] = useState(true);
+
+  const { currentAccount } = useContext(ContractContext);
+
+  // useEffect(() => {
+  //   const getParticipants = async () => {
+  //     const allParticipants = await contract.getParticipants();
+  //     console.log(allParticipants);
+  //     setParticipants(allParticipants);
+  //     if (currentAccount in allParticipants) {
+  //       setIsMember(true);
+  //     }
+  //   };
+  //   getParticipants();
+  // }, []);
 
   const handleShowParticipants = async () => {
     const allParticipants = await contract.getParticipants();
@@ -56,12 +72,15 @@ export const Contract = ({ contract, index }) => {
         {contract.address}
       </p>
       <div class="w-full flex justify-between">
+        {/* {isMember ? null : ( */}
         <button
           class={btnStyle}
           onClick={() => contract.handleAddParticipant(index)}
         >
           Join
-        </button>{" "}
+        </button>
+        {/* )} */}
+
         {showAddTransaction ? (
           <CreateTransaction
             contract={contract}

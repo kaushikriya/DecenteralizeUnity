@@ -7,7 +7,7 @@ const App=()=> {
   const {contracts}= useContext(ContractContext)
   // console.log(contracts);
   return (
- <div class='bg-gradient-to-r from-[#243c5a] justify-between'>
+ <div class='min-h-screen bg-gradient-to-r from-[#243c5a] justify-between'>
       <Navbar/>
       <CreateContract/>
       <AllContracts contracts={contracts}/>

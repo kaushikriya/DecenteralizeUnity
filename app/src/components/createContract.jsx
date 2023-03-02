@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ContractContext } from "../context/contractContext";
 
 export const CreateContract = () => {
@@ -12,7 +12,9 @@ export const CreateContract = () => {
     // setContractForm,
   } = useContext(ContractContext);
 
-  console.log(contractFormData);
+  useEffect(() => {
+    console.log(contractFormData);
+  }, [contractFormData]);
 
   // const ContractForm = () => (
   //   <div class="grid">
@@ -86,7 +88,7 @@ export const CreateContract = () => {
               onChange={(e) => handleFormData(e)}
             ></input>
             <button
-              class="mx-4 rounded-full bg-blue-300 hover:bg-blue-200 cursor-pointer px-2 py-2"
+              class="mx-4 rounded-full bg-[#f5f5f5] hover:bg-blue-200 cursor-pointer px-2 py-2"
               value="submit"
               onClick={createContract}
             >
@@ -95,7 +97,7 @@ export const CreateContract = () => {
           </div>
         ) : (
           <button
-            class="mx-4 rounded-full bg-blue-300  hover:bg-blue-200 cursor-pointer px-2 py-2"
+            class="mx-4 rounded-full bg-[#f5f5f5]  hover:bg-blue-200 cursor-pointer px-2 py-2"
             onClick={connectWallet}
           >
             Connect

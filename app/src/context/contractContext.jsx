@@ -133,7 +133,7 @@ export const ContractProvider = ({ children }) => {
         };
 
         setContracts([...contracts, contract]);
-        console.log(contracts);
+        setContractForm({ name: null, amount: null, description: null });
       }
     } catch (e) {
       console.log(e);

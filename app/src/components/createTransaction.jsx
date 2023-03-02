@@ -15,8 +15,8 @@ export const CreateTransaction = ({ contract, handleShowAddTransaction }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const createTransaction = () => {
-    contract.handleAddTransaction(
+  const createTransaction = async () => {
+    await contract.handleAddTransaction(
       formData.name,
       formData.description,
       formData.amount
@@ -25,7 +25,7 @@ export const CreateTransaction = ({ contract, handleShowAddTransaction }) => {
   };
 
   const btnStyle =
-    "w-[30%] rounded-full bg-blue-300 hover:bg-blue-200 cursor-pointer px-1 py-2 mx-2 my-2";
+    "w-[30%] rounded-full bg-[#f5f5f5] justify-self-center hover:bg-blue-200 cursor-pointer px-1 py-2 mx-2 my-2";
 
   return (
     <div className="flex justify-center items-center overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
@@ -63,7 +63,7 @@ export const CreateTransaction = ({ contract, handleShowAddTransaction }) => {
                     onChange={(e) => handleFormData(e)}
                   ></input>
                   <button
-                    class="w-[30%] justify-self-center mx-4 rounded-full bg-blue-300 hover:bg-blue-200 cursor-pointer px-2 py-2"
+                    class="w-[30%] justify-self-center mx-4 rounded-full bg-[#f5f5f5] hover:bg-blue-200 cursor-pointer px-2 py-2"
                     value="submit"
                     onClick={createTransaction}
                   >
