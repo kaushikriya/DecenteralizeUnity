@@ -7,11 +7,11 @@ module.exports = {
   networks: {
     hardhat: {
     },
-    goerli: {
-      url: process.env.RPC_URL,
-      accounts: [process.env.PRIVATE_KEY],
-      gas: 2100000,
-      gasPrice: 8000000000,
-    }
+    // goerli: {
+    //   url: process.env.RPC_URL,
+    //   accounts: [process.env.PRIVATE_KEY],
+    //   gas: 2100000,
+    //   gasPrice: 8000000000,
+    // }
   },                                     
 };
